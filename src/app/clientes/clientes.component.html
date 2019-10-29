@@ -1,0 +1,51 @@
+<detalle-cliente *ngIf="clienteSeleccionado" [cliente]="clienteSeleccionado"></detalle-cliente>
+
+<div class="card border-primary mb-2">
+  <div class="card-header">Clientes</div>
+  <div class="card-body text-primary">
+    <h5 class="card-title">Listado de Clientes</h5>
+    <div class="my-2 text-left">
+      <button type="button" class="btn btn-rounded btn-primary"
+        *ngIf="authService.hasRole('ROLE_ADMIN')" 
+        [routerLink]="['/clientes/form']" 
+        routerLinkActive="router-link-active">Crear Cliente</button>
+    </div>
+    <div class="alert alert-info" *ngIf="clientes?.length == 0">
+      No existen clientes para mosrtrar.
+    </div>
+    <table class="table table-bordered table-striped" *ngIf="clientes?.length > 0">
+      <thead>
+        <tr>
+          <th *ngIf="authService.hasRole('ROLE_USER')" >#</th>
+          <th>NOMBRE</th>
+          <th>APELLIDOS</th>          
+          <th>EMAIL</th>
+          <th>FECHA</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')" >editar</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')" >eliminar</th>
+        </tr>        
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientes">
+          <td>
+              <img *ngIf="cliente?.foto" (click)=abrirModal(cliente) src="http://localhost:8080/api/uploads/img/{{cliente.foto}}"
+              alt="{{cliente.foto}}" class="img-thumbnail rounded" style="cursor: pointer; width: 64px;"> 
+              <img *ngIf="!cliente?.foto" (click)=abrirModal(cliente) src="http://localhost:8080/images/no-user.png"
+              alt="{{cliente.foto}}" class="img-thumbnail rounded" style="cursor: pointer; width: 64px;">            
+          </td>
+          <td>{{cliente.nombre}}</td>
+          <td>{{cliente.apellido | uppercase}}</td>
+          <td>{{cliente.email}}</td>
+          <td>{{cliente.createAt | date:"EEEE dd, MMMM yyyy"}}</td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+            <button type="button" name="button" [routerLink]="['/clientes/form', cliente.id]" class="btn btn-primary">editar</button>
+          </td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+            <button type="button" name="button" (click)='deleteCliente(cliente)' class="btn btn-danger">Eliminar</button>
+          </td>         
+        </tr>
+      </tbody>
+    </table>
+    <paginator-nav *ngIf="paginador" [paginador] = "paginador"></paginator-nav>
+  </div>
+</div>
