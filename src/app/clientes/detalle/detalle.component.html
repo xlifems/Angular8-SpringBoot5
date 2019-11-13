@@ -12,7 +12,7 @@
           <div class="container">
             <div class="row">
               <div class="col-sm">
-  
+
                 <ul *ngIf="cliente" class="list-group text-dark mb-3">
                   <li class="list-group-item active">{{cliente.nombre}}</li>
                   <li class="list-group-item">{{cliente.apellido}}</li>
@@ -31,23 +31,51 @@
                       type="button" id="inputGroupFileAddon04">Subir</button>
                   </div>
                 </div>
-  
+
                 <div *ngIf="progreso > 0" class="progress">
                   <div class="progress-bar progress-bar-striped" role="progressbar" [ngStyle]="{width: progreso+'%'}"
                     attr.aria-valuenow="{{progreso}}" aria-valuemin="0" aria-valuemax="100">
                     {{progreso}}%
                   </div>
                 </div>
-  
+
               </div>
               <div class="col-sm">
                 <img *ngIf="cliente?.foto" src="http://localhost:8080/api/uploads/img/{{cliente.foto}}"
                   alt="{{cliente.foto}}" class="img-thumbnail rounded">
               </div>
             </div>
+            <div class="alert alert-info my-4" *ngIf="cliente.facturas.length == 0">
+              No hay facturas asigamnadas para el cliente {{cliente.nombre}} {{cliente.apellido}}
+            </div>
+            <div class="row">
+              <table class="table table-bordered table-striped my-4" *ngIf="cliente.facturas.length > 0">
+                <thead>
+                  <tr>
+                    <th>folio</th>
+                    <th>descripción</th>
+                    <th>fecha</th>
+                    <th>total</th>
+                    <th>detalle</th>
+                    <th >eliminar</th><!-- *ngIf="authService.hasRole('ROLE_ADMIN')"-->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let factura of cliente.facturas">
+                    <td>{{factura.id}}</td>
+                    <td>{{factura.descripcion}}</td>
+                    <td>{{factura.createAt}}</td>
+                    <td>{{factura.total}}</td>                   
+                    <td><button class="btn btn-primary btn-sm" type="button"
+                        [routerLink]="['/facturas', factura.id]">ver</button></td>
+                   <td><button class="btn btn-danger btn-sm" type="button" (click)="delete(factura)">eliminar</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <div class="modal-footer">       
+        <div class="modal-footer">
           <button (click)="cerrarModal()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
