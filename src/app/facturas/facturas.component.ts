@@ -3,12 +3,14 @@ import { Factura } from './models/factura';
 import { ClienteService } from '../clientes/cliente.service';
 import { ActivatedRoute } from '@angular/router';
 
-import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith, flatMap} from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith, flatMap } from 'rxjs/operators';
 
-import {FacturaService} from './services/factura.service';
+import { FacturaService } from './services/factura.service';
 import { Producto } from './models/producto';
+import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { ItemFactura } from './models/item-factura';
 
 @Component({
   selector: 'app-facturas',
@@ -21,7 +23,7 @@ export class FacturasComponent implements OnInit {
   factura: Factura = new Factura();
 
   myControl = new FormControl();
-  
+
   productosFiltrados: Observable<Producto[]>;
 
   constructor(private clienteService: ClienteService,
@@ -35,9 +37,9 @@ export class FacturasComponent implements OnInit {
     });
 
     this.productosFiltrados = this.myControl.valueChanges
-      .pipe(        
+      .pipe(
         map(value => typeof value === 'string' ? value : value.nombre),
-        flatMap(value => value ? this._filter(value) : []) 
+        flatMap(value => value ? this._filter(value) : [])
       );
   }
 
@@ -47,8 +49,59 @@ export class FacturasComponent implements OnInit {
     return this.facturaService.filtrarProductos(filterValue);
   }
 
-  mostrarNombre(producto?:Producto): string | undefined {
-    return producto? producto.nombre : undefined;
+  mostrarNombre(producto?: Producto): string | undefined {
+    return producto ? producto.nombre : undefined;
+  }
+
+  productoSeleccionado(event: MatAutocompleteSelectedEvent): void {
+
+    let producto = event.option.value as Producto;
+    console.log(producto);
+
+    if (this.existeItem(producto.id)) {
+      this.incrementaCantidad(producto.id);
+    } else {
+      let nuevoItem = new ItemFactura();
+      nuevoItem.producto = producto;
+      this.factura.items.push(nuevoItem);
+    }
+
+
+    this.myControl.setValue('');
+    event.option.focus();
+    event.option.deselect();
+
+  }
+
+  actualizarCantidad(id: number, event: any) {
+    let cantidad: number = event.target.value as number;
+
+    this.factura.items = this.factura.items.map((item: ItemFactura) => {
+      if (id === item.producto.id) {
+        item.cantidad = cantidad;
+      }
+      return item;
+    });
+  }
+
+
+  existeItem(id: number): boolean {
+    let existe = false;
+    this.factura.items.forEach((item: ItemFactura) => {
+      if (id === item.producto.id) {
+        existe = true;
+      }
+    });
+    return existe;
+  }
+
+  incrementaCantidad(id: number): void {
+    this.factura.items = this.factura.items.map((item: ItemFactura) => {
+      if (id === item.producto.id) {
+        ++item.cantidad;
+      }
+      return item;
+    });
   }
 
 }
