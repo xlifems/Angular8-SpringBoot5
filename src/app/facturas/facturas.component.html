@@ -52,16 +52,18 @@
         </div>
       </div>
 
+      <div class="alert alert-info my-4" *ngIf="factura.items.length == 0">
+        No hay lineas para esta factura
+      </div>
+
       <table class="table table-striped table-hover table-sm" *ngIf="factura.items.length > 0">
         <thead>
           <tr>
             <th>Producto</th>
             <th>Precio</th>
             <th>Cantidad</th>
-            <th>Total</th>
-            <!-- 
-            <th>Eliminar</th>
-            -->
+            <th>Total</th>          
+            <th>Eliminar</th>           
           </tr>
         </thead>
         <tbody>
@@ -69,14 +71,15 @@
             <td>{{item.producto.nombre}}</td>
             <td>{{item.producto.precio}}</td>
             <td><input type="number" value="{{item.cantidad}}" class="form-control col-sm-4" (change)="actualizarCantidad(item.producto.id, $event)"></td> <!---->
-            <td>{{item.calcularImporte()}}</td>
-            <!--
+            <td>{{item.calcularImporte()}}</td>         
             <td><button class="btn btn-danger btn-sm" type="button"
-                (click)="eliminarItemFactura(item.producto.id)">x</button></td>
-            -->
+                (click)="eliminarItemFactura(item.producto.id)">x</button>
+            </td>          
           </tr>
         </tbody>
       </table>
+
+      <h5 class="float-right" *ngIf="factura.items.length > 0">Gran Total: <span class="badge badge-secondary"> {{ factura.calcularGranTotal() }}</span></h5>
 
       <div class="form-group row">
         <div class="col-sm-6">
