@@ -5,7 +5,7 @@
       <a [routerLink]="['/clientes']" class="btn btn-light btn-xs">&laquo; volver</a>
     </h4>
 
-    <form>
+    <form #facturaForm="ngForm">
 
       <div class="form-group row" *ngIf="factura.cliente">
         <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
@@ -18,13 +18,13 @@
       <div class="form-group row">
         <label for="descripcion" class="col-sm-2 col-form-label">Descripción</label>
         <div class="col-sm-6">
+
           <input type="text" name="descripcion" [(ngModel)]="factura.descripcion" class="form-control" required
-            #descripcion="ngModel">
-          <!--
+            #descripcion="ngModel">        
           <div class="alert alert-danger" *ngIf="descripcion.invalid && descripcion.touched || descripcion.invalid && facturaForm.submitted">
             La descripción es requerida.
           </div>
-          -->
+        
         </div>
       </div>
 
@@ -39,7 +39,7 @@
         <div class="col-sm-6">
 
           <mat-form-field>
-            <input type="text" placeholder="Pick one" aria-label="Number" matInput [formControl]="myControl"
+            <input type="text" placeholder="Pick one" aria-label="Number" matInput [formControl]="autocompleteControl"
               [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarNombre"
               (optionSelected)="productoSeleccionado($event)">
@@ -48,6 +48,9 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+          <div class="alert alert-danger" *ngIf="autocompleteControl.invalid && facturaForm.submitted">
+              La factura debe tener lineas.
+          </div>
 
         </div>
       </div>
@@ -83,7 +86,8 @@
 
       <div class="form-group row">
         <div class="col-sm-6">
-          <input type="submit" (click)="create(facturaForm)" value="Crear Factura" class="btn btn-secondary">
+          <input type="submit" (click)="create(facturaForm)" value="Crear Factura" class="btn btn-secondary" >
+          <!-- [disabled]="facturaForm.form.invalid || factura.items.length == 0" // para validar el boton-->
         </div>
       </div>
 

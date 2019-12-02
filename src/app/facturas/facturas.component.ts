@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Factura } from './models/factura';
 import { ClienteService } from '../clientes/cliente.service';
-import { ActivatedRoute , Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -24,13 +24,13 @@ export class FacturasComponent implements OnInit {
   titulo: string = 'Nueva factura';
   factura: Factura = new Factura();
 
-  myControl = new FormControl();
+  autocompleteControl = new FormControl();
 
   productosFiltrados: Observable<Producto[]>;
 
   constructor(private clienteService: ClienteService,
     private facturaService: FacturaService,
-    private router:Router,
+    private router: Router,
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
@@ -39,7 +39,7 @@ export class FacturasComponent implements OnInit {
       this.clienteService.getCliente(clienteId).subscribe(cliente => this.factura.cliente = cliente);
     });
 
-    this.productosFiltrados = this.myControl.valueChanges
+    this.productosFiltrados = this.autocompleteControl.valueChanges
       .pipe(
         map(value => typeof value === 'string' ? value : value.nombre),
         flatMap(value => value ? this._filter(value) : [])
@@ -70,7 +70,7 @@ export class FacturasComponent implements OnInit {
     }
 
 
-    this.myControl.setValue('');
+    this.autocompleteControl.setValue('');
     event.option.focus();
     event.option.deselect();
 
@@ -115,11 +115,17 @@ export class FacturasComponent implements OnInit {
 
   create(facturaForm): void {
     console.log(this.factura);
-    this.facturaService.create(this.factura).subscribe(factura => {
-      Swal.fire(this.titulo, `Factura ${factura.descripcion} creada con éxito!`, 'success');
-      this.router.navigate(['/clientes']);
-    });
 
+    if (this.factura.items.length == 0) {
+      this.autocompleteControl.setErrors({ 'invalid': true });
+    }
+
+    if (facturaForm.form.valid && this.factura.items.length > 0) {
+      this.facturaService.create(this.factura).subscribe(factura => {
+        Swal.fire(this.titulo, `Factura ${factura.descripcion} creada con éxito!`, 'success');
+        this.router.navigate(['/clientes']);
+      });
+    }
   }
 
   /*
