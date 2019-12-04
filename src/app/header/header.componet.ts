@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class HeaderComponent {    
     tittle:string = 'App Angular';
 
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(public authService: AuthService, private router: Router) { }
     logout(): void {
       let username = this.authService.usuario.username;
       this.authService.logout();

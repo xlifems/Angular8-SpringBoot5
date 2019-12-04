@@ -13,7 +13,7 @@ import { Region } from './region';
 export class FormComponent implements OnInit {
 
   titulo: String = 'Crear Cliente';
-  cliente: Cliente = new Cliente();
+  public cliente: Cliente = new Cliente();
   errores: String[];
   regiones: Region[];
 
@@ -67,6 +67,7 @@ export class FormComponent implements OnInit {
    * 
    */
   public update(): void {
+    this.cliente.facturas = null;
     this.clienteService.updateCliente(this.cliente).subscribe(
       response => {
         this.router.navigate(['/clientes']);

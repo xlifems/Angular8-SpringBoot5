@@ -49,7 +49,7 @@
               No hay facturas asigamnadas para el cliente {{cliente.nombre}} {{cliente.apellido}}
             </div>
 
-            <div class="row">
+            <div class="row" *ngIf="authService.hasRole('ROLE_ADMIN')">
               <td>
                 <button type="button" name="button" [routerLink]="['/facturas/form', cliente.id]" class="btn btn-success">crear factura</button>
               </td>
@@ -63,7 +63,7 @@
                     <th>fecha</th>
                     <th>total</th>
                     <th>detalle</th>
-                    <th >eliminar</th><!-- *ngIf="authService.hasRole('ROLE_ADMIN')"-->
+                    <th *ngIf="authService.hasRole('ROLE_ADMIN')" >eliminar</th><!-- -->
                   </tr>
                 </thead>
                 <tbody>
@@ -74,7 +74,7 @@
                     <td>{{factura.total}}</td>                   
                     <td><button class="btn btn-primary btn-sm" type="button"
                         [routerLink]="['/facturas', factura.id]">ver</button></td>
-                   <td><button class="btn btn-danger btn-sm" type="button" (click)="delete(factura)">eliminar</button></td>
+                   <td *ngIf="authService.hasRole('ROLE_ADMIN')"><button class="btn btn-danger btn-sm" type="button" (click)="delete(factura)">eliminar</button></td>
                   </tr>
                 </tbody>
               </table>
